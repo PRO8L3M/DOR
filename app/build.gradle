@@ -1,0 +1,79 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: "com.github.ben-manes.versions"
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+    defaultConfig {
+        applicationId "com.mobile.droidsOnRoids"
+        minSdkVersion 23
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+// to check libraries latest versions: `gradlew -p app dependencyUpdates`
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath Libraries.gradleVersionPlugin
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation Libraries.kotlin
+
+    implementation Libraries.androidxAppCompat
+    implementation Libraries.androidxCoreKtx
+    implementation Libraries.androidxConstraintLayout
+
+    implementation Libraries.koin
+    implementation Libraries.koinAndroid
+    implementation Libraries.koinAndroidxExt
+    implementation Libraries.koinAndroidxScope
+    implementation Libraries.koinAndroidxViewModel
+    implementation Libraries.koinExt
+
+    implementation Libraries.material
+
+    implementation Libraries.coroutines
+
+    implementation Libraries.leakCanary
+
+    implementation Libraries.timber
+
+    implementation Libraries.androidxLegacy
+
+    implementation Libraries.viewModelScopeKtx
+    implementation Libraries.lifecycleScopeKtx
+    implementation Libraries.liveDataKtx
+
+    implementation Libraries.navigationFragmentKtx
+    implementation Libraries.navigationKtx
+
+    testImplementation Libraries.junit
+    androidTestImplementation Libraries.androidxJunit
+    androidTestImplementation Libraries.androidxEspresso
+}
