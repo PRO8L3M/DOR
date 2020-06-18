@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorPrimary">#FEC508</color>
+    <color name="colorPrimaryDark">@android:color/black</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="gray">#F0F0F0</color>
+    <color name="weakYellow">#4dFEC508</color>
+    <color name="green">#51b852</color>
+    <color name="red">#de1d33</color>
+    <color name="blue">#4080e6</color>
 
     <color name="startBackground">@color/gray</color>
+    <color name="newSudokuButton">@color/green</color>
+    <color name="deleteCellButton">@color/red</color>
+    <color name="checkSudokuButton">@color/blue</color>
 </resources>

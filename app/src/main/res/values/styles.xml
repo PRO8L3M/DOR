@@ -1,11 +1,32 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="DORButton" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="NumberButton" parent="DORButton"/>
+
+    <style name="NewSudokuButton" parent="DORButton">
+        <item name="android:backgroundTint">@color/newSudokuButton</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="DeleteCellButton" parent="DORButton">
+        <item name="android:backgroundTint">@color/deleteCellButton</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="CheckSudokuBtn" parent="DORButton">
+        <item name="android:backgroundTint">@color/checkSudokuButton</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
 </resources>

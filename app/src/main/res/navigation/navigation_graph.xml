@@ -3,11 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/startFragment">
+    app:startDestination="@id/splashScreenFragment">
 
     <fragment
         android:id="@+id/startFragment"
-        android:name="com.mobile.droidsOnRoids.ui.start.StartFragment"
+        android:name="com.mobile.droidsOnRoids.ui.sudoku.SudokuFragment"
         android:label="fragment_start"
-        tools:layout="@layout/fragment_start" />
+        tools:layout="@layout/fragment_sudoku" />
+    <fragment
+        android:id="@+id/splashScreenFragment"
+        android:name="com.mobile.droidsOnRoids.ui.splashScreen.SplashScreenFragment"
+        android:label="fragment_splash_screen"
+        tools:layout="@layout/fragment_splash_screen">
+        <action
+            android:id="@+id/action_splashScreenFragment_to_startFragment"
+            app:destination="@id/startFragment"
+            app:popUpTo="@id/splashScreenFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

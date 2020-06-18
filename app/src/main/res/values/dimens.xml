@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_big_32dp">32dp</dimen>
+    <dimen name="splash_screen_logo_width">300dp</dimen>
+    <dimen name="splash_screen_logo_height">300dp</dimen>
+    <dimen name="margin_small_8dp">8dp</dimen>
+</resources>

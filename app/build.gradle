@@ -16,6 +16,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", 'BASE_URL', baseURL
     }
 
     dataBinding {
@@ -55,6 +56,7 @@ dependencies {
     implementation Libraries.koinAndroidxScope
     implementation Libraries.koinAndroidxViewModel
     implementation Libraries.koinExt
+    testImplementation Libraries.koinTest
 
     implementation Libraries.material
 
@@ -73,7 +75,20 @@ dependencies {
     implementation Libraries.navigationFragmentKtx
     implementation Libraries.navigationKtx
 
+    implementation Libraries.retrofit
+    implementation Libraries.moshiConverter
+    implementation Libraries.moshi
+    implementation Libraries.okhttp
+    implementation Libraries.okhttpInterceptor
+
+    implementation Libraries.roomKtx
+    implementation Libraries.room
+    kapt Libraries.roomCompiler
+
     testImplementation Libraries.junit
+    testImplementation Libraries.mockito
+    testImplementation Libraries.archCoreTesting
+    testImplementation Libraries.coroutinesTest
     androidTestImplementation Libraries.androidxJunit
     androidTestImplementation Libraries.androidxEspresso
 }
