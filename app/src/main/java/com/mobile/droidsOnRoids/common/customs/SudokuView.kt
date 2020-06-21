@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -16,9 +17,15 @@ import kotlin.math.min
 
 class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
+    init {
+        isSaveEnabled = true
+    }
+
     private var cellSizePixels = 0f
-    private var selectedRow = 0
-    private var selectedColumn = 0
+    private var selectedRow =
+        ROW_STARTING_POSITION
+    private var selectedColumn =
+        COLUMN_STARTING_POSITION
     private var cells: List<Cell>? = null
     private val selectedCellColor = ContextCompat.getColor(context, R.color.weakYellow)
 
@@ -40,7 +47,8 @@ class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     override fun onDraw(canvas: Canvas) {
         cellSizePixels = (width / BOARD_SIZE).toFloat()
-        digitsPaint.textSize = TEXT_SIZE
+        digitsPaint.textSize =
+            TEXT_SIZE
         drawLines(canvas)
         drawText(canvas)
         fillCell(canvas, selectedRow, selectedColumn, selectedCellPaint)
@@ -82,7 +90,8 @@ class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         invalidate()
     }
 
-    fun getCurrentSelectedCell() = cells?.find { cell -> (cell.row == selectedRow) and (cell.column == selectedColumn) }
+    fun getCurrentSelectedCell() =
+        cells?.find { cell -> (cell.row == selectedRow) and (cell.column == selectedColumn) }
 
     private fun drawText(canvas: Canvas) = with(canvas) {
         cells?.forEach { cell ->
@@ -95,7 +104,7 @@ class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             val textWidth = digitsPaint.measureText(value)
             val textHeight = textBounds.height()
 
-            val valueString = when(cell.value) {
+            val valueString = when (cell.value) {
                 0 -> ""
                 else -> cell.value.toString()
             }
@@ -126,8 +135,28 @@ class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         updateCurrentSelectedCell(newSelectedRow, newSelectedColumn)
     }
 
+    override fun onSaveInstanceState(): Parcelable? {
+        return SavedState(super.onSaveInstanceState()).apply {
+            currentSelectedRow = selectedRow
+            currentSelectedColumn = selectedColumn
+        }
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) = when (state) {
+        is SavedState -> {
+            with(state) {
+                super.onRestoreInstanceState(superState)
+                selectedRow = currentSelectedRow
+                selectedColumn = currentSelectedColumn
+            }
+        }
+        else -> super.onRestoreInstanceState(state)
+    }
+
     companion object {
         private const val BOARD_SIZE = 9
         private const val TEXT_SIZE = 80f
+        private const val ROW_STARTING_POSITION = 4
+        private const val COLUMN_STARTING_POSITION = 4
     }
 }

@@ -8,11 +8,8 @@ import retrofit2.http.Path
 interface SudokuApi {
 
     @GET("new")
-    suspend fun getSudokuBoard(): Response<List<Cell>>
+    suspend fun fetchSudoku(): Response<List<Cell>>
 
-    @GET("hint/{sudokuChain}")
-    suspend fun getSudokuHint(@Path("uncompletedSudoku") uncompletedSudoku: String): Response<String>
-
-    @GET("solve/{sudokuChain}")
-    suspend fun getSudokuSolution(@Path("uncompletedSudoku") uncompletedSudoku: String): Response<String>
+    @GET("solve/{uncompletedSudoku}")
+    suspend fun fetchSudokuSolution(@Path("uncompletedSudoku") uncompletedSudoku: String): Response<List<Cell>>
 }

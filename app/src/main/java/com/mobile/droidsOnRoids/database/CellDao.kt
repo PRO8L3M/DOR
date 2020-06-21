@@ -16,9 +16,12 @@ interface CellDao {
     @Update
     suspend fun updateCell(cell: Cell)
 
-    @Query("SELECT * FROM Cell")
-    fun getCells(): Flow<List<Cell>>
+    @Query("SELECT * FROM Cell WHERE isSolution = 0")
+    suspend fun getSudoku(): List<Cell>
+
+    @Query("SELECT * FROM Cell WHERE isSolution = 1")
+    suspend fun getSolution(): List<Cell>
 
     @Query("DELETE FROM CELL")
-    suspend fun clearAllTables()
+    suspend fun clearTable()
 }

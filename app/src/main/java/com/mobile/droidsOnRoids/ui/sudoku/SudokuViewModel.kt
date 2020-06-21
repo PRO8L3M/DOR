@@ -7,33 +7,29 @@ import androidx.lifecycle.viewModelScope
 import com.mobile.droidsOnRoids.data.entity.Cell
 import com.mobile.droidsOnRoids.data.network.Result
 import com.mobile.droidsOnRoids.data.network.doOnSuccess
+import com.mobile.droidsOnRoids.ext.convertToSudokuChain
+import com.mobile.droidsOnRoids.repository.ISudokuRepository
 import com.mobile.droidsOnRoids.repository.SudokuRepository
-import kotlinx.coroutines.flow.collect
+import com.mobile.droidsOnRoids.util.SingleLiveEvent
 import kotlinx.coroutines.launch
 
 class SudokuViewModel(private val repository: SudokuRepository) : ViewModel() {
 
-    private val _sudoku: MutableLiveData<Result<List<Cell>>> by lazy { MutableLiveData<Result<List<Cell>>>() }.apply { getSudokuBoard() }
+    private val _sudoku: MutableLiveData<Result<List<Cell>>> by lazy { MutableLiveData<Result<List<Cell>>>() }
     val sudoku: LiveData<Result<List<Cell>>> = _sudoku
 
-    private fun fetchSudokuBoard() {
-        /**
-         * Normally I use Dispatchers.IO for remote work and changes to Main when need to post result to LiveData
-         * but I've heard from last GDG Wroclaw Webinar that retrofit knows that I use coroutines and handle that for me under the hood
-         */
-        viewModelScope.launch {
-            repository.fetchSudokuBoard()
-        }
+    private val _isSolved: SingleLiveEvent<Boolean> by lazy { SingleLiveEvent<Boolean>() }
+    val isSolved: SingleLiveEvent<Boolean> = _isSolved
+
+    init {
+        getSudokuBoard()
     }
 
     private fun getSudokuBoard() {
         viewModelScope.launch {
-            repository.getSudokuBoard().doOnSuccess { cellsFlow ->
-                cellsFlow.collect { cells ->
-                    if (cells.isEmpty()) fetchSudokuBoard()
-                   _sudoku.value = Result.Success(cells)
-                }
-            }
+            _sudoku.value = Result.Loading
+            val result = repository.getSudoku()
+            _sudoku.value = result
         }
     }
 
@@ -41,6 +37,20 @@ class SudokuViewModel(private val repository: SudokuRepository) : ViewModel() {
         if (!cell.isEditable) return
         viewModelScope.launch {
             repository.updateCell(cell)
+            getSudokuBoard()
+        }
+    }
+
+    fun checkSolution() {
+        viewModelScope.launch {
+            repository.getSudokuSolution().doOnSuccess { solution ->
+                _sudoku.value?.doOnSuccess { sudoku ->
+                    val solutionChain = solution.convertToSudokuChain()
+                    val sudokuChain = sudoku.convertToSudokuChain()
+                    val isTheSame = solutionChain == sudokuChain
+                    _isSolved.value = isTheSame
+                }
+            }
         }
     }
 
@@ -54,9 +64,10 @@ class SudokuViewModel(private val repository: SudokuRepository) : ViewModel() {
         updateCell(newCell)
     }
 
-    fun clearAllTables() {
+    fun getNewSudoku() {
         viewModelScope.launch {
-            repository.clearAllTables()
+            repository.clearTable()
+            getSudokuBoard()
         }
     }
 

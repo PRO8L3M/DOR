@@ -19,6 +19,16 @@ android {
         buildConfigField "String", 'BASE_URL', baseURL
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+
     dataBinding {
         enabled = true
     }

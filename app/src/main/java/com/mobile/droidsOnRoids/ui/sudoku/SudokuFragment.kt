@@ -4,21 +4,27 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.mobile.droidsOnRoids.R
 import com.mobile.droidsOnRoids.common.DOUBLE_BACK_PRESSED_DURATION
+import com.mobile.droidsOnRoids.common.UNKNOWN_ERROR
 import com.mobile.droidsOnRoids.data.entity.Cell
 import com.mobile.droidsOnRoids.data.network.SudokuObserver
+import com.mobile.droidsOnRoids.databinding.FragmentSudokuBinding
+import com.mobile.droidsOnRoids.ext.dataBinding
 import com.mobile.droidsOnRoids.ext.snackBar
 import com.mobile.droidsOnRoids.ext.toast
 import kotlinx.android.synthetic.main.fragment_sudoku.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class SudokuFragment : Fragment(R.layout.fragment_sudoku) {
 
     private val viewModel: SudokuViewModel by viewModel()
+    private val dataBinding: FragmentSudokuBinding by dataBinding()
     private var isDoubleClicked = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -28,6 +34,11 @@ class SudokuFragment : Fragment(R.layout.fragment_sudoku) {
             viewLifecycleOwner,
             SudokuObserver(::onSuccess, ::onFailure, ::onLoading)
         )
+
+        viewModel.isSolved.observe(viewLifecycleOwner, Observer { isSolved ->
+            val message = if (isSolved) "It's solved correctly!" else "It's wrong!"
+            snackBar(message)
+        })
 
         setupButtonsClickListeners()
         onDoubleBackPressed()
@@ -60,19 +71,27 @@ class SudokuFragment : Fragment(R.layout.fragment_sudoku) {
         }
 
         sudoku_view_btn_new.setOnClickListener {
-            viewModel.clearAllTables()
+            viewModel.getNewSudoku()
+        }
+
+        sudoku_view_btn_check.setOnClickListener {
+            viewModel.checkSolution()
         }
     }
 
     private fun onSuccess(cells: List<Cell>) {
         sudoku_view.fillCells(cells)
+        dataBinding.isLoading = false
     }
 
     private fun onFailure(exception: Exception) {
-        snackBar(exception.localizedMessage ?: "error occurred")
+        snackBar(exception.localizedMessage ?: UNKNOWN_ERROR)
+        dataBinding.isLoading = false
     }
 
-    private fun onLoading() {}
+    private fun onLoading() {
+        dataBinding.isLoading = true
+    }
 
     private fun onDoubleBackPressed() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {

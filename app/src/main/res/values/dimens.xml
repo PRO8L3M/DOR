@@ -4,4 +4,8 @@
     <dimen name="splash_screen_logo_width">300dp</dimen>
     <dimen name="splash_screen_logo_height">300dp</dimen>
     <dimen name="margin_small_8dp">8dp</dimen>
+    <dimen name="sudoku_view_progress_bar_width_100dp">100dp</dimen>
+    <dimen name="sudoku_view_progress_bar_height_100dp">100dp</dimen>
+    <dimen name="margin_small_4dp">4dp</dimen>
+    <dimen name="margin_small_2dp">2dp</dimen>
 </resources>
