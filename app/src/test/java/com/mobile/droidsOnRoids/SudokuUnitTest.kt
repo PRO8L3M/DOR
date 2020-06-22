@@ -5,7 +5,6 @@ import com.mobile.droidsOnRoids.ext.convertDigitChainToCells
 import com.mobile.droidsOnRoids.ext.convertToSudokuChain
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.io.IOException
 import javax.crypto.IllegalBlockSizeException
 import kotlin.test.assertFailsWith
 

@@ -13,11 +13,9 @@ import kotlin.reflect.KProperty
 
 fun Fragment.toast(text: String, duration: Int = Toast.LENGTH_SHORT) = Toast.makeText(requireContext(), text, duration).show()
 
-fun Fragment.snackBar(text: String, duration: Int = Snackbar.LENGTH_SHORT) = Snackbar.make(requireView(), text, duration).show()
+fun Fragment.snackBar(text: String, duration: Int = Snackbar.LENGTH_LONG) = Snackbar.make(requireView(), text, duration).show()
 
 fun Fragment.navigateTo(@IdRes destination: Int) = findNavController().navigate(destination)
-
-fun Fragment.navigateBack() = findNavController().popBackStack()
 
 fun <T : ViewDataBinding> Fragment.dataBinding(): ReadOnlyProperty<Fragment, T> {
     return object : ReadOnlyProperty<Fragment, T> {

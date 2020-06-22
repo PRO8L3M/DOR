@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">droidsOnRoids</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tap_again_to_exit">Tap again to exit the application</string>
+
     <string name="sudoku_btn_1">1</string>
     <string name="sudoku_btn_2">2</string>
     <string name="sudoku_btn_3">3</string>
@@ -13,9 +12,9 @@
     <string name="sudoku_btn_7">7</string>
     <string name="sudoku_btn_8">8</string>
     <string name="sudoku_btn_9">9</string>
-    <string name="sudoku_btn_delete">Delete</string>
-    <string name="sudoku_btn_new">new</string>
-    <string name="sudoku_btn_check">check</string>
+
     <string name="sudoku_solved_message">Sudoku solved!</string>
     <string name="sudoku_unsolved_message">Sudoku unsolved!</string>
+    <string name="sudoku_fetched_error">Could not fetch new Sudoku. Check your connection and try again!</string>
+    <string name="sudoku_save_to_db_error">Could not handle this operation with the database. Please, do not be angry :)</string>
 </resources>

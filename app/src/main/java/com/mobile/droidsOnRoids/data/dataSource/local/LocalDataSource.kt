@@ -8,5 +8,5 @@ class LocalDataSource(private val db: AppDatabase) {
     suspend fun updateCell(cell: Cell) = db.cellDao().updateCell(cell)
     suspend fun getSudoku() = db.cellDao().getSudoku()
     suspend fun getSudokuSolution() = db.cellDao().getSolution()
-    suspend fun clearAllTables() = db.cellDao().clearTable()
+    suspend fun clearTable() = db.cellDao().clearTable()
 }

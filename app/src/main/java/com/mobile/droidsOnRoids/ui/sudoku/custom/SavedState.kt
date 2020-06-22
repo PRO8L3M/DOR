@@ -21,7 +21,6 @@ internal class SavedState : View.BaseSavedState {
             currentSelectedColumn = readInt()
             sudokuSize = readInt()
         }
-
     }
 
     override fun writeToParcel(out: Parcel, flags: Int) {

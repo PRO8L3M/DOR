@@ -8,9 +8,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.mobile.droidsOnRoids.R
 import com.mobile.droidsOnRoids.common.DOUBLE_BACK_PRESSED_DURATION
-import com.mobile.droidsOnRoids.common.UNKNOWN_ERROR
 import com.mobile.droidsOnRoids.data.entity.Cell
 import com.mobile.droidsOnRoids.data.network.SudokuObserver
+import com.mobile.droidsOnRoids.data.network.doOnFailure
+import com.mobile.droidsOnRoids.data.network.error.SudokuError
 import com.mobile.droidsOnRoids.databinding.FragmentSudokuBinding
 import com.mobile.droidsOnRoids.ext.dataBinding
 import com.mobile.droidsOnRoids.ext.snackBar
@@ -19,7 +20,6 @@ import kotlinx.android.synthetic.main.fragment_sudoku.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class SudokuFragment : Fragment(R.layout.fragment_sudoku) {
 
@@ -30,10 +30,29 @@ class SudokuFragment : Fragment(R.layout.fragment_sudoku) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-       observeSudokuLiveData()
+        observeSudokuFetchLiveData()
+        observeSudokuLiveData()
         observeSolutionLiveData()
         setupButtonsClickListeners()
         onDoubleBackPressed()
+    }
+
+    private fun observeSudokuFetchLiveData() {
+        viewModel.isSudokuFetched.observe(viewLifecycleOwner, Observer { isFetched ->
+           isFetched.doOnFailure { exception ->
+               when(exception) {
+                   is SudokuError.NetworkError -> snackBar(getString(R.string.sudoku_fetched_error))
+               }
+           }
+        })
+    }
+
+    private fun observeSolutionLiveData() {
+        viewModel.isSolved.observe(viewLifecycleOwner, Observer { isSolved ->
+            val message =
+                if (isSolved) getString(R.string.sudoku_solved_message) else getString(R.string.sudoku_unsolved_message)
+            snackBar(message)
+        })
     }
 
     private fun observeSudokuLiveData() {
@@ -43,14 +62,7 @@ class SudokuFragment : Fragment(R.layout.fragment_sudoku) {
         )
     }
 
-    private fun observeSolutionLiveData() {
-        viewModel.isSolved.observe(viewLifecycleOwner, Observer { isSolved ->
-            val message = if (isSolved) getString(R.string.sudoku_solved_message) else getString(R.string.sudoku_unsolved_message)
-            snackBar(message)
-        })
-    }
-
-    private fun setupButtonsClickListeners() = with(dataBinding){
+    private fun setupButtonsClickListeners() = with(dataBinding) {
         val numberButtons = listOf(
             sudokuViewBtn1,
             sudokuViewBtn2,
@@ -93,8 +105,9 @@ class SudokuFragment : Fragment(R.layout.fragment_sudoku) {
     }
 
     private fun onFailure(exception: Exception) {
-        Timber.i("aaa Fragme")
-        snackBar(exception.localizedMessage ?: UNKNOWN_ERROR)
+        when(exception) {
+            is SudokuError.DatabaseError -> snackBar(getString(R.string.sudoku_save_to_db_error))
+        }
         dataBinding.isLoading = false
     }
 

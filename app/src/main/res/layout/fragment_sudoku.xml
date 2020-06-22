@@ -147,7 +147,7 @@
                 android:layout_row="3"
                 android:layout_column="0"
                 app:icon="@drawable/ic_sudoku_view_check"
-                android:paddingEnd="1dp"
+                android:paddingEnd="@dimen/padding_small_1dp"
                 app:iconGravity="textStart"
                 app:isActive="@{isLoading}" />
 
@@ -161,7 +161,7 @@
                 android:layout_marginStart="@dimen/margin_small_8dp"
                 android:layout_marginEnd="@dimen/margin_small_8dp"
                 app:icon="@drawable/ic_delete_cell_value"
-                android:paddingEnd="1dp"
+                android:paddingEnd="@dimen/padding_small_1dp"
                 app:iconGravity="textStart"
                 app:isActive="@{isLoading}" />
 
@@ -173,7 +173,7 @@
                 android:layout_row="3"
                 android:layout_column="2"
                 app:icon="@drawable/ic_sudoku_view_new"
-                android:paddingEnd="1dp"
+                android:paddingEnd="@dimen/padding_small_1dp"
                 app:iconGravity="textStart"
                 app:isActive="@{isLoading}" />
         </GridLayout>

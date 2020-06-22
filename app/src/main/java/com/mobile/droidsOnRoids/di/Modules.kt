@@ -1,28 +1,22 @@
 package com.mobile.droidsOnRoids.di
 
-import android.content.Context
-import android.net.ConnectivityManager
 import com.mobile.droidsOnRoids.BuildConfig
 import com.mobile.droidsOnRoids.common.*
 import com.mobile.droidsOnRoids.data.dataSource.local.LocalDataSource
 import com.mobile.droidsOnRoids.data.dataSource.remote.RemoteDataSource
-import com.mobile.droidsOnRoids.data.network.ConnectionManagerImpl
-import com.mobile.droidsOnRoids.data.network.SudokuResponseConverter
 import com.mobile.droidsOnRoids.data.network.SudokuApi
+import com.mobile.droidsOnRoids.data.network.SudokuResponseConverter
 import com.mobile.droidsOnRoids.database.AppDatabase
 import com.mobile.droidsOnRoids.repository.ISudokuRepository
 import com.mobile.droidsOnRoids.repository.SudokuRepository
 import com.mobile.droidsOnRoids.ui.splashScreen.SplashScreenViewModel
 import com.mobile.droidsOnRoids.ui.sudoku.SudokuViewModel
 import okhttp3.OkHttpClient
-import okhttp3.internal.wait
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
-import java.util.concurrent.TimeUnit
 
 object AppModules {
     val modules = listOf(
@@ -71,11 +65,6 @@ private val networkModule = module {
             .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
             .build()
     }
-
-    single(named(CONNECTIVITY_MANAGER)) { androidApplication().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
-
-    single { ConnectionManagerImpl(get(named(CONNECTIVITY_MANAGER))) }
-
 }
 
 private val databaseModule = module {

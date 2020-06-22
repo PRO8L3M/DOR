@@ -1,34 +1,52 @@
 package com.mobile.droidsOnRoids.ui.sudoku
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mobile.droidsOnRoids.data.entity.Cell
 import com.mobile.droidsOnRoids.data.network.Result
+import com.mobile.droidsOnRoids.data.network.doOnFailure
 import com.mobile.droidsOnRoids.data.network.doOnSuccess
 import com.mobile.droidsOnRoids.ext.convertToSudokuChain
 import com.mobile.droidsOnRoids.repository.ISudokuRepository
-import com.mobile.droidsOnRoids.repository.SudokuRepository
 import com.mobile.droidsOnRoids.util.SingleLiveEvent
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 class SudokuViewModel(private val repository: ISudokuRepository) : ViewModel() {
 
     private val _sudoku: MutableLiveData<Result<List<Cell>>> by lazy { MutableLiveData<Result<List<Cell>>>() }
-    val sudoku: LiveData<Result<List<Cell>>> = _sudoku
+    val sudoku: MutableLiveData<Result<List<Cell>>> = _sudoku
 
     private val _isSolved: SingleLiveEvent<Boolean> by lazy { SingleLiveEvent<Boolean>() }
     val isSolved: SingleLiveEvent<Boolean> = _isSolved
 
+    private val _isSudokuFetched: SingleLiveEvent<Result<Boolean>> by lazy { SingleLiveEvent<Result<Boolean>>() }
+    val isSudokuFetched: SingleLiveEvent<Result<Boolean>> = _isSudokuFetched
+
     init {
-        getSudokuBoard()
+        initGetSudoku()
     }
 
-    private fun getSudokuBoard() {
+    private fun initGetSudoku() {
+        viewModelScope.launch {
+            repository.getSudoku()
+                .doOnSuccess { _sudoku.value = Result.Success(it) }
+                .doOnFailure { getSudokuRemotely() }
+        }
+    }
+
+    private fun getSudokuRemotely() {
+        viewModelScope.launch {
+            _sudoku.value = Result.Loading
+            repository.fetchSudoku()
+                .doOnFailure {
+                    _isSudokuFetched.value = Result.Failure(it)
+                }
+            getSudokuLocally()
+        }
+    }
+
+    private fun getSudokuLocally() {
         viewModelScope.launch {
             _sudoku.value = Result.Loading
             val result = repository.getSudoku()
@@ -36,11 +54,12 @@ class SudokuViewModel(private val repository: ISudokuRepository) : ViewModel() {
         }
     }
 
+
     private fun updateCell(cell: Cell) {
         if (!cell.isEditable) return
         viewModelScope.launch {
-            withContext(Dispatchers.IO){ repository.updateCell(cell) }
-            getSudokuBoard()
+            repository.updateCell(cell)
+            getSudokuLocally()
         }
     }
 
@@ -69,8 +88,7 @@ class SudokuViewModel(private val repository: ISudokuRepository) : ViewModel() {
 
     fun getNewSudoku() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO){ repository.clearTable() }
-            getSudokuBoard()
+            getSudokuRemotely()
         }
     }
 }

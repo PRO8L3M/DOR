@@ -3,6 +3,7 @@ package com.mobile.droidsOnRoids.ext
 import com.mobile.droidsOnRoids.data.entity.Cell
 import retrofit2.Response
 import java.io.IOException
+import java.lang.IllegalStateException
 import javax.crypto.IllegalBlockSizeException
 import kotlin.math.floor
 import kotlin.math.sqrt
@@ -15,7 +16,7 @@ fun <A : Any> Response<A>.bodyOrException(): A {
 }
 
 fun <T : Any> List<T>.throwIfEmpty() =
-    if (isEmpty()) throw IOException("List is empty!") else this
+    if (isEmpty()) throw NoSuchElementException("List is empty!") else this
 
 fun List<Cell>.convertToSudokuChain() =
     joinToString { it.value.toString() }.replace(", ", "").replace('0', '.')
