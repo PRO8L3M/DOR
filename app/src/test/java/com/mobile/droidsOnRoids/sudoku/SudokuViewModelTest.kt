@@ -1,8 +1,10 @@
-package com.mobile.droidsOnRoids.start
+package com.mobile.droidsOnRoids.sudoku
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.mobile.droidsOnRoids.TestCoroutineRule
+import com.mobile.droidsOnRoids.data.entity.Cell
+import com.mobile.droidsOnRoids.data.network.Result
 import com.mobile.droidsOnRoids.repository.SudokuRepository
 import com.mobile.droidsOnRoids.ui.sudoku.SudokuViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,8 +18,8 @@ import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 
-class StartViewModelTest {
-   /* @ExperimentalCoroutinesApi
+class SudokuViewModelTest {
+    @ExperimentalCoroutinesApi
     @RunWith(MockitoJUnitRunner::class)
     class SplashScreenViewModelTest : KoinTest {
 
@@ -28,21 +30,23 @@ class StartViewModelTest {
         val testCoroutineRule = TestCoroutineRule()
 
         @Mock
-        private lateinit var itemsObserver: Observer<List<Item>>
+        private lateinit var sudokuObserver: Observer<Result<List<Cell>>>
 
         @Mock
         private lateinit var repo: SudokuRepository
 
+        private val cells = listOf(Cell(row = 1, column = 1, value = 2, isSolution = true, isEditable = true))
+
         @Test
-        fun `should return mocked item list`() {
+        fun `should return mocked cell list`() {
             testCoroutineRule.runBlockingTest {
-                doReturn(emptyList<Item>()).`when`(repo).getMockedItems()
+                doReturn(Result.Success(cells)).`when`(repo).getSudoku()
                 val viewModel = SudokuViewModel(repo)
-                viewModel.items.observeForever(itemsObserver)
-                verify(repo).getMockedItems()
-                verify(itemsObserver).onChanged(emptyList())
-                viewModel.items.removeObserver(itemsObserver)
+                viewModel.sudoku.observeForever(sudokuObserver)
+                verify(repo).getSudoku()
+                verify(sudokuObserver).onChanged(Result.Success(cells))
+                viewModel.sudoku.removeObserver(sudokuObserver)
             }
         }
-    }*/
+    }
 }

@@ -16,4 +16,6 @@
     <string name="sudoku_btn_delete">Delete</string>
     <string name="sudoku_btn_new">new</string>
     <string name="sudoku_btn_check">check</string>
+    <string name="sudoku_solved_message">Sudoku solved!</string>
+    <string name="sudoku_unsolved_message">Sudoku unsolved!</string>
 </resources>

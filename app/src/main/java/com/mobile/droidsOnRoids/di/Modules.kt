@@ -40,7 +40,7 @@ private val viewModelModule = module {
 }
 
 private val repositoryModule = module {
-    single(named(SUDOKU_REPOSITORY)) {
+    single<ISudokuRepository>(named(SUDOKU_REPOSITORY)) {
         SudokuRepository(
             get(named(SUDOKU_LOCAL_DATA_SOURCE)), get(
                 named(
@@ -75,6 +75,7 @@ private val networkModule = module {
     single(named(CONNECTIVITY_MANAGER)) { androidApplication().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
 
     single { ConnectionManagerImpl(get(named(CONNECTIVITY_MANAGER))) }
+
 }
 
 private val databaseModule = module {

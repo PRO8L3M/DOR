@@ -1,4 +1,4 @@
-package com.mobile.droidsOnRoids.common.customs
+package com.mobile.droidsOnRoids.ui.sudoku.custom
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -14,12 +14,9 @@ import androidx.core.content.ContextCompat
 import com.mobile.droidsOnRoids.R
 import com.mobile.droidsOnRoids.data.entity.Cell
 import kotlin.math.min
+import kotlin.math.sqrt
 
 class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
-
-    init {
-        isSaveEnabled = true
-    }
 
     private var cellSizePixels = 0f
     private var selectedRow =
@@ -27,17 +24,19 @@ class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private var selectedColumn =
         COLUMN_STARTING_POSITION
     private var cells: List<Cell>? = null
+    private var sudokuSize = DEFAULT_BOARD_SIZE
     private val selectedCellColor = ContextCompat.getColor(context, R.color.weakYellow)
 
     private val linesPaint = Paint().apply {
         style = Paint.Style.STROKE
         color = Color.BLACK
-        strokeWidth = 4F
+        strokeWidth = 4f
     }
 
     private val digitsPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
+        textSize = TEXT_SIZE
     }
 
     private val selectedCellPaint = Paint().apply {
@@ -46,11 +45,9 @@ class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     override fun onDraw(canvas: Canvas) {
-        cellSizePixels = (width / BOARD_SIZE).toFloat()
-        digitsPaint.textSize =
-            TEXT_SIZE
+        cellSizePixels = (width / sudokuSize).toFloat()
         drawLines(canvas)
-        drawText(canvas)
+        drawDigits(canvas)
         fillCell(canvas, selectedRow, selectedColumn, selectedCellPaint)
     }
 
@@ -63,7 +60,7 @@ class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private fun drawLines(canvas: Canvas) = with(canvas) {
         drawRect(0f, 0f, width.toFloat(), height.toFloat(), linesPaint)
 
-        for (i in 1 until BOARD_SIZE) {
+        for (i in 1 until sudokuSize) {
             drawLine(i * cellSizePixels, 0f, i * cellSizePixels, height.toFloat(), linesPaint)
             drawLine(0f, i * cellSizePixels, width.toFloat(), i * cellSizePixels, linesPaint)
         }
@@ -80,6 +77,7 @@ class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     fun fillCells(cells: List<Cell>) {
+        sudokuSize = sqrt(cells.size.toDouble()).toInt()
         this.cells = cells
         invalidate()
     }
@@ -93,7 +91,7 @@ class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     fun getCurrentSelectedCell() =
         cells?.find { cell -> (cell.row == selectedRow) and (cell.column == selectedColumn) }
 
-    private fun drawText(canvas: Canvas) = with(canvas) {
+    private fun drawDigits(canvas: Canvas) = with(canvas) {
         cells?.forEach { cell ->
             val row = cell.row
             val column = cell.column
@@ -108,7 +106,6 @@ class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
                 0 -> ""
                 else -> cell.value.toString()
             }
-
 
             drawText(
                 valueString,
@@ -136,10 +133,12 @@ class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     override fun onSaveInstanceState(): Parcelable? {
-        return SavedState(super.onSaveInstanceState()).apply {
-            currentSelectedRow = selectedRow
-            currentSelectedColumn = selectedColumn
-        }
+        return SavedState(super.onSaveInstanceState())
+            .apply {
+                currentSelectedRow = selectedRow
+                currentSelectedColumn = selectedColumn
+                sudokuSize = this@SudokuView.sudokuSize
+            }
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) = when (state) {
@@ -148,13 +147,14 @@ class SudokuView(context: Context, attrs: AttributeSet) : View(context, attrs) {
                 super.onRestoreInstanceState(superState)
                 selectedRow = currentSelectedRow
                 selectedColumn = currentSelectedColumn
+                this@SudokuView.sudokuSize = sudokuSize
             }
         }
         else -> super.onRestoreInstanceState(state)
     }
 
     companion object {
-        private const val BOARD_SIZE = 9
+        private const val DEFAULT_BOARD_SIZE = 9
         private const val TEXT_SIZE = 80f
         private const val ROW_STARTING_POSITION = 4
         private const val COLUMN_STARTING_POSITION = 4

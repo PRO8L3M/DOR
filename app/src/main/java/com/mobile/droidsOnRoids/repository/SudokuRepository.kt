@@ -4,11 +4,14 @@ import com.mobile.droidsOnRoids.data.dataSource.local.LocalDataSource
 import com.mobile.droidsOnRoids.data.dataSource.remote.RemoteDataSource
 import com.mobile.droidsOnRoids.data.entity.Cell
 import com.mobile.droidsOnRoids.data.network.Result
+import com.mobile.droidsOnRoids.data.network.doOnFailure
 import com.mobile.droidsOnRoids.data.network.doOnSuccess
+import com.mobile.droidsOnRoids.data.network.error.toSudokuError
 import com.mobile.droidsOnRoids.data.network.safeCall
 import com.mobile.droidsOnRoids.ext.bodyOrException
 import com.mobile.droidsOnRoids.ext.convertToSudokuChain
 import com.mobile.droidsOnRoids.ext.throwIfEmpty
+import timber.log.Timber
 
 class SudokuRepository(
     private val localDataSource: LocalDataSource,
@@ -29,7 +32,8 @@ class SudokuRepository(
 
 
     override suspend fun getSudoku(): Result<List<Cell>> {
-        val localResult = safeCall { localDataSource.getSudoku().throwIfEmpty() }
+        val localResult = safeCall { localDataSource.getSudoku().throwIfEmpty() }.doOnFailure {
+            Timber.i("aaa repo ${it.toSudokuError().originalException?.localizedMessage}") }
         return if (localResult is Result.Failure) {
             safeCall {
                 val remoteResult = fetchSudoku()

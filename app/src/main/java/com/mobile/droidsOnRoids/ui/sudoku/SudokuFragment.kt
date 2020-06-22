@@ -30,61 +30,70 @@ class SudokuFragment : Fragment(R.layout.fragment_sudoku) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.sudoku.observe(
-            viewLifecycleOwner,
-            SudokuObserver(::onSuccess, ::onFailure, ::onLoading)
-        )
-
-        viewModel.isSolved.observe(viewLifecycleOwner, Observer { isSolved ->
-            val message = if (isSolved) "It's solved correctly!" else "It's wrong!"
-            snackBar(message)
-        })
-
+       observeSudokuLiveData()
+        observeSolutionLiveData()
         setupButtonsClickListeners()
         onDoubleBackPressed()
     }
 
-    private fun setupButtonsClickListeners() {
-        val numberButtons = listOf(
-            sudoku_view_btn_1,
-            sudoku_view_btn_2,
-            sudoku_view_btn_3,
-            sudoku_view_btn_4,
-            sudoku_view_btn_5,
-            sudoku_view_btn_6,
-            sudoku_view_btn_7,
-            sudoku_view_btn_8,
-            sudoku_view_btn_9
+    private fun observeSudokuLiveData() {
+        viewModel.sudoku.observe(
+            viewLifecycleOwner,
+            SudokuObserver(::onSuccess, ::onFailure, ::onLoading)
         )
+    }
+
+    private fun observeSolutionLiveData() {
+        viewModel.isSolved.observe(viewLifecycleOwner, Observer { isSolved ->
+            val message = if (isSolved) getString(R.string.sudoku_solved_message) else getString(R.string.sudoku_unsolved_message)
+            snackBar(message)
+        })
+    }
+
+    private fun setupButtonsClickListeners() = with(dataBinding){
+        val numberButtons = listOf(
+            sudokuViewBtn1,
+            sudokuViewBtn2,
+            sudokuViewBtn3,
+            sudokuViewBtn4,
+            sudokuViewBtn5,
+            sudokuViewBtn6,
+            sudokuViewBtn7,
+            sudokuViewBtn8,
+            sudokuViewBtn9
+        )
+
         numberButtons.forEachIndexed { index, btn ->
             btn.setOnClickListener {
-                val clickedCell = sudoku_view.getCurrentSelectedCell()
+                val clickedCell = sudokuView.getCurrentSelectedCell()
                 clickedCell?.let {
                     viewModel.addNewCellValue(clickedCell, index + 1)
                 }
             }
         }
-        sudoku_view_btn_delete.setOnClickListener {
+
+        sudokuViewBtnDelete.setOnClickListener {
             sudoku_view.getCurrentSelectedCell()?.let {
                 viewModel.deleteCell(it)
             }
         }
 
-        sudoku_view_btn_new.setOnClickListener {
+        sudokuViewBtnNew.setOnClickListener {
             viewModel.getNewSudoku()
         }
 
-        sudoku_view_btn_check.setOnClickListener {
+        sudokuViewBtnCheck.setOnClickListener {
             viewModel.checkSolution()
         }
     }
 
-    private fun onSuccess(cells: List<Cell>) {
-        sudoku_view.fillCells(cells)
-        dataBinding.isLoading = false
+    private fun onSuccess(cells: List<Cell>) = with(dataBinding) {
+        sudokuView.fillCells(cells)
+        isLoading = false
     }
 
     private fun onFailure(exception: Exception) {
+        Timber.i("aaa Fragme")
         snackBar(exception.localizedMessage ?: UNKNOWN_ERROR)
         dataBinding.isLoading = false
     }

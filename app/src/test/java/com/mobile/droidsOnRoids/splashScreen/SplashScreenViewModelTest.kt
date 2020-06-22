@@ -35,7 +35,6 @@ class SplashScreenViewModelTest : KoinTest {
         testCoroutineRule.runBlockingTest {
             viewModel.isSplashScreenFinished.observeForever(isSplashScreenFinishedObserver)
             viewModel.runSplashScreen()
-            // todo change delay somehow
             delay(SPLASH_SCREEN_DURATION)
             assert(viewModel.isSplashScreenFinished.value == true)
         }

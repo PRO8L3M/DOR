@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.mobile.droidsOnRoids.common.customs.SudokuView
+        <com.mobile.droidsOnRoids.ui.sudoku.custom.SudokuView
             android:id="@+id/sudoku_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

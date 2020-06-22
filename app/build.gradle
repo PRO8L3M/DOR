@@ -55,6 +55,7 @@ buildscript {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation Libraries.kotlin
+    testImplementation Libraries.kotlinTest
 
     implementation Libraries.androidxAppCompat
     implementation Libraries.androidxCoreKtx

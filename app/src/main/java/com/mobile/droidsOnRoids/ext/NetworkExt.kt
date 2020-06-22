@@ -2,21 +2,27 @@ package com.mobile.droidsOnRoids.ext
 
 import com.mobile.droidsOnRoids.data.entity.Cell
 import retrofit2.Response
-import java.lang.Exception
+import java.io.IOException
+import javax.crypto.IllegalBlockSizeException
+import kotlin.math.floor
 import kotlin.math.sqrt
 
-fun <A: Any> Response<A>.bodyOrException(): A {
+fun <A : Any> Response<A>.bodyOrException(): A {
     val body = body()
     return if (isSuccessful && body != null) {
         body
     } else throw Exception(message())
 }
 
-fun <T: Any> List<T>.throwIfEmpty() = if (isEmpty()) throw Exception("List is empty!") else this
+fun <T : Any> List<T>.throwIfEmpty() =
+    if (isEmpty()) throw IOException("List is empty!") else this
 
-fun List<Cell>.convertToSudokuChain() = joinToString {it.value.toString()}.replace(", ", "").replace('0', '.')
+fun List<Cell>.convertToSudokuChain() =
+    joinToString { it.value.toString() }.replace(", ", "").replace('0', '.')
 
-fun String.convertDigitsChainToCells(): List<Cell> {
+fun String.convertDigitChainToCells(): List<Cell> {
+    val squareValue = sqrt(length.toDouble())
+    if ((squareValue - floor(squareValue)) != 0.0 ) throw IllegalBlockSizeException("Provided list size is not square rooted!")
     val sudokuSize = sqrt(length.toDouble()).toInt()
     val isSolution = !contains(".")
     val digitsChain = replace(".", "0")

@@ -43,6 +43,7 @@ object Versions {
 
 object Libraries {
     val kotlin = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin}"
+    val kotlinTest= "org.jetbrains.kotlin:kotlin-test:${Versions.kotlin}"
 
     val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
 

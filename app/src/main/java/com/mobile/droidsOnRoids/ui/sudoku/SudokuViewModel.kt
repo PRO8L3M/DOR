@@ -11,9 +11,12 @@ import com.mobile.droidsOnRoids.ext.convertToSudokuChain
 import com.mobile.droidsOnRoids.repository.ISudokuRepository
 import com.mobile.droidsOnRoids.repository.SudokuRepository
 import com.mobile.droidsOnRoids.util.SingleLiveEvent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
-class SudokuViewModel(private val repository: SudokuRepository) : ViewModel() {
+class SudokuViewModel(private val repository: ISudokuRepository) : ViewModel() {
 
     private val _sudoku: MutableLiveData<Result<List<Cell>>> by lazy { MutableLiveData<Result<List<Cell>>>() }
     val sudoku: LiveData<Result<List<Cell>>> = _sudoku
@@ -36,7 +39,7 @@ class SudokuViewModel(private val repository: SudokuRepository) : ViewModel() {
     private fun updateCell(cell: Cell) {
         if (!cell.isEditable) return
         viewModelScope.launch {
-            repository.updateCell(cell)
+            withContext(Dispatchers.IO){ repository.updateCell(cell) }
             getSudokuBoard()
         }
     }
@@ -66,9 +69,8 @@ class SudokuViewModel(private val repository: SudokuRepository) : ViewModel() {
 
     fun getNewSudoku() {
         viewModelScope.launch {
-            repository.clearTable()
+            withContext(Dispatchers.IO){ repository.clearTable() }
             getSudokuBoard()
         }
     }
-
 }
