@@ -10,7 +10,9 @@ import com.mobile.droidsOnRoids.data.network.doOnSuccess
 import com.mobile.droidsOnRoids.ext.convertToSudokuChain
 import com.mobile.droidsOnRoids.repository.ISudokuRepository
 import com.mobile.droidsOnRoids.util.SingleLiveEvent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SudokuViewModel(private val repository: ISudokuRepository) : ViewModel() {
 
@@ -29,7 +31,7 @@ class SudokuViewModel(private val repository: ISudokuRepository) : ViewModel() {
 
     private fun initGetSudoku() {
         viewModelScope.launch {
-            repository.getSudoku()
+            withContext(Dispatchers.IO){ repository.getSudoku() }
                 .doOnSuccess { _sudoku.value = Result.Success(it) }
                 .doOnFailure { getSudokuRemotely() }
         }
@@ -49,7 +51,7 @@ class SudokuViewModel(private val repository: ISudokuRepository) : ViewModel() {
     private fun getSudokuLocally() {
         viewModelScope.launch {
             _sudoku.value = Result.Loading
-            val result = repository.getSudoku()
+            val result = withContext(Dispatchers.IO) { repository.getSudoku() }
             _sudoku.value = result
         }
     }
@@ -58,7 +60,7 @@ class SudokuViewModel(private val repository: ISudokuRepository) : ViewModel() {
     private fun updateCell(cell: Cell) {
         if (!cell.isEditable) return
         viewModelScope.launch {
-            repository.updateCell(cell)
+            withContext(Dispatchers.IO) { repository.updateCell(cell) }
             getSudokuLocally()
         }
     }
